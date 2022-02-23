@@ -86,9 +86,11 @@ class _HomePageState extends State<HomePage> {
 
   List<Transaction> get _recentTransactions {
     return _transactions.where((trans) {
-      return trans.date.isAfter(DateTime.now().subtract(
-        Duration(days: 7),
-      ));
+      return trans.date.isAfter(
+        DateTime.now().subtract(
+          const Duration(days: 7),
+        ),
+      );
     }).toList();
   }
 
@@ -123,27 +125,37 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Center(
-          child: Text('Finanças'),
-        ),
-        actions: <Widget>[
-          IconButton(
-            icon: const Icon(Icons.add),
-            onPressed: () => _openTransactionFormModal(context),
-          )
-        ],
+    final appBar = AppBar(
+      title: const Center(
+        child: Text('Finanças'),
       ),
+      actions: <Widget>[
+        IconButton(
+          icon: const Icon(Icons.add),
+          onPressed: () => _openTransactionFormModal(context),
+        )
+      ],
+    );
+
+    final double appBarHeight = appBar.preferredSize.height;
+    final double paddingTop = MediaQuery.of(context).padding.top;
+
+    final double availableHeight =
+        MediaQuery.of(context).size.height - appBarHeight - paddingTop;
+
+    return Scaffold(
+      appBar: appBar,
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
-            Chart(_recentTransactions),
-            Column(
-              children: <Widget>[
-                TransactionList(_transactions, _deleteTransaction),
-              ],
+            SizedBox(
+              height: availableHeight * 0.325,
+              child: Chart(_recentTransactions),
+            ),
+            SizedBox(
+              height: availableHeight * 0.64,
+              child: TransactionList(_transactions, _deleteTransaction),
             ),
           ],
         ),
